@@ -1,0 +1,34 @@
+linters:
+  disable-all: true
+  enable:
+    - deadcode
+    - dupl
+    - errcheck
+    - goconst
+    - gocyclo
+    - gofmt
+    - goimports
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - lll
+    - misspell
+    - nakedret
+    - prealloc
+    - staticcheck
+    - structcheck
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+    - varcheck
+    - revive
+    - exportloopref
+run:
+  deadline: 5m
+  modules-download-mode: mod
+linters-settings:
+  lll:
+    line-length: 150
+    tab-width: 1
