@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"sispa-iam-api/internal/handler"
+	"sispa-iam-api/internal/middleware"
 )
 
 const PORT = ":8090"
@@ -21,7 +22,7 @@ func NewServer() *Server {
 
 // setupRoutes configura as rotas do servidor
 func (s *Server) setupRoutes() {
-	s.mux.HandleFunc("/users", handler.GetUsers)
+	s.mux.Handle("/users", middleware.AuthMiddleware(http.HandlerFunc(handler.GetUsers)))
 }
 
 // Start inicia o servidor
