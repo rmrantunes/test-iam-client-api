@@ -15,7 +15,6 @@ const PORT = ":8090"
 type Server struct {
 	mux *http.ServeMux
 
-	userHandler     *handler.UserHandler
 	enforcerHandler *handler.EnforcerHandler
 }
 
@@ -26,9 +25,6 @@ type NewServerInjectInput struct {
 func NewServer(inject *NewServerInjectInput) *Server {
 	casdoorService := service.NewCasdoorService(inject.CasdoorClient)
 
-	userService := service.NewUserService(casdoorService)
-	userHandler := handler.NewUserHandler(userService)
-
 	enforcerService := service.NewEnforcerService(&service.ServiceInjectInput{
 		CasdoorService: casdoorService,
 	})
@@ -36,7 +32,6 @@ func NewServer(inject *NewServerInjectInput) *Server {
 
 	s := &Server{
 		mux:             http.NewServeMux(),
-		userHandler:     userHandler,
 		enforcerHandler: enforcerHandler,
 	}
 	s.setupRoutes()
@@ -45,7 +40,6 @@ func NewServer(inject *NewServerInjectInput) *Server {
 
 // setupRoutes configura as rotas do servidor
 func (s *Server) setupRoutes() {
-	s.mux.Handle("/users", middleware.AuthMiddleware(http.HandlerFunc(s.userHandler.GetUsers)))
 	s.mux.Handle("/enforcer/enforce", middleware.AuthMiddleware(http.HandlerFunc(s.enforcerHandler.Enforce)))
 }
 
