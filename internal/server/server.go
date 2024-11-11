@@ -40,7 +40,7 @@ func NewServer(inject *NewServerInjectInput) *Server {
 
 // setupRoutes configura as rotas do servidor
 func (s *Server) setupRoutes() {
-	s.mux.Handle("/enforcer/enforce", middleware.AuthMiddleware(http.HandlerFunc(s.enforcerHandler.Enforce)))
+	s.mux.Handle("/enforcer/enforce", middleware.Method("POST", middleware.AuthMiddleware(http.HandlerFunc(s.enforcerHandler.Enforce))))
 }
 
 // Start inicia o servidor
