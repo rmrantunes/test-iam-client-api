@@ -3,6 +3,7 @@ package middleware
 import (
 	"context"
 	"net/http"
+	"sispa-iam-api/internal/service"
 	"strings"
 )
 
@@ -18,13 +19,20 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		authHeader := r.Header.Get(AuthorizationHeader)
 
 		if authHeader == "" {
-			http.Error(w, "Authorization header missing", http.StatusUnauthorized)
+			service.StdHttpError(w, &service.ErrorHandlerInput{
+				Message:        []string{"Authorization header missing"},
+				HttpStatusCode: http.StatusBadRequest,
+			})
 			return
 		}
 
 		parts := strings.Split(authHeader, " ")
 		if len(parts) != 2 || strings.ToLower(parts[0]) != "bearer" {
-			http.Error(w, "Invalid authorization header format", http.StatusUnauthorized)
+			service.StdHttpError(w, &service.ErrorHandlerInput{
+				Message:        []string{"Invalid authorization header format"},
+				HttpStatusCode: http.StatusBadRequest,
+			})
+			return
 		}
 
 		token := parts[1]

@@ -43,7 +43,10 @@ func (s *EnforcerHandler) Enforce(w http.ResponseWriter, r *http.Request) {
 	permissionId := query.Get("permissionId")
 
 	if permissionId == "" {
-		http.Error(w, "permissionId missing", http.StatusBadRequest)
+		service.StdHttpError(w, &service.ErrorHandlerInput{
+			Message:        []string{"permissionId missing"},
+			HttpStatusCode: http.StatusBadRequest,
+		})
 		return
 	}
 
@@ -56,7 +59,11 @@ func (s *EnforcerHandler) Enforce(w http.ResponseWriter, r *http.Request) {
 	})
 
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		service.StdHttpError(w, &service.ErrorHandlerInput{
+			Message:        []string{err.Error()},
+			HttpStatusCode: http.StatusBadRequest,
+		})
+		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")

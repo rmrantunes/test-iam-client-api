@@ -22,7 +22,11 @@ func (s *UserHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
 	token, ok := middleware.GetTokenFromContext(r.Context())
 
 	if !ok {
-		http.Error(w, "Token not found in context", http.StatusUnauthorized)
+		service.StdHttpError(w, &service.ErrorHandlerInput{
+			Message:        []string{"Token not found in header"},
+			HttpStatusCode: http.StatusBadRequest,
+		})
+		return
 	}
 
 	fmt.Printf("Token received %s\n", token)
