@@ -6,6 +6,8 @@ import (
 	"github.com/casdoor/casdoor-go-sdk/casdoorsdk"
 )
 
+const emptyString = "novaluestring"
+
 type CasdoorService struct {
 	client *casdoorsdk.Client
 }
@@ -15,11 +17,11 @@ func NewCasdoorService(client *casdoorsdk.Client) *CasdoorService {
 }
 
 type EnforceInput struct {
-	permissionId         string
-	accessToken          string
-	relationObjectUserId string
-	resource             string
-	action               string
+	PermissionId         string
+	Resource             string
+	Action               string
+	RelationObjectUserId string
+	AccessToken          string
 }
 
 type EnforceResult struct {
@@ -27,27 +29,31 @@ type EnforceResult struct {
 }
 
 func (s *CasdoorService) Enforce(input *EnforceInput) (*EnforceResult, error) {
-	if input.accessToken == "" {
+	if input.AccessToken == "" {
 		return nil, fmt.Errorf("accessToken missing")
 	}
 
-	claims, err := s.client.ParseJwtToken(input.accessToken)
+	claims, err := s.client.ParseJwtToken(input.AccessToken)
 
 	if err != nil {
-		return nil, fmt.Errorf("error while parsing casdoor access token")
+		return nil, fmt.Errorf("error while parsing casdoor access token" + "; " + err.Error())
 	}
 
 	sub := claims.User.Owner + "/" + claims.User.Name
 
 	casbinRequest := []interface{}{
 		sub,
-		input.resource,
-		input.action,
-		input.relationObjectUserId,
-		claims.User.ExternalId,
+		input.Resource,
+		input.Action,
+		input.RelationObjectUserId,
+		// claims.User.ExternalId,
 	}
 
-	result, err := s.client.Enforce(input.permissionId, "", "", "", "", casbinRequest)
+	result, err := s.client.Enforce(input.PermissionId, emptyString, emptyString, emptyString, emptyString, casbinRequest)
+
+	if err != nil {
+		return nil, err
+	}
 
 	return &EnforceResult{
 		allowed: result,
