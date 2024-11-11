@@ -1,8 +1,12 @@
 package main
 
-import "sispa-iam-api/internal/server"
+import (
+	"sispa-iam-api/internal/config"
+	"sispa-iam-api/internal/server"
+)
 
 func main() {
-	s := server.NewServer()
+	casdoorClient := config.NewCasdoorClient()
+	s := server.NewServer(casdoorClient)
 	s.Start()
 }

@@ -5,10 +5,20 @@ import (
 	"fmt"
 	"net/http"
 	"sispa-iam-api/internal/middleware"
-	service_users "sispa-iam-api/internal/service"
+	"sispa-iam-api/internal/service"
 )
 
-func GetUsers(w http.ResponseWriter, r *http.Request) {
+type UserHandler struct {
+	userService *service.UserService
+}
+
+func NewUserHandler(userService *service.UserService) *UserHandler {
+	return &UserHandler{
+		userService: userService,
+	}
+}
+
+func (s *UserHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
 	token, ok := middleware.GetTokenFromContext(r.Context())
 
 	if !ok {
@@ -17,7 +27,7 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Printf("Token received %s\n", token)
 
-	users := service_users.GetUsers()
+	users := s.userService.GetUsers()
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
