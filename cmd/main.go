@@ -7,6 +7,8 @@ import (
 
 func main() {
 	casdoorClient := config.NewCasdoorClient()
-	s := server.NewServer(casdoorClient)
+	s := server.NewServer(&server.NewServerInjectInput{
+		CasdoorClient: casdoorClient,
+	})
 	s.Start()
 }

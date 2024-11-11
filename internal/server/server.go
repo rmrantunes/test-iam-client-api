@@ -19,14 +19,19 @@ type Server struct {
 	enforcerHandler *handler.EnforcerHandler
 }
 
-// NewServer cria uma nova instância do servidor
-func NewServer(casdoorClient *casdoorsdk.Client) *Server {
-	casdoorService := service.NewCasdoorService(casdoorClient)
+type NewServerInjectInput struct {
+	CasdoorClient *casdoorsdk.Client
+}
+
+func NewServer(inject *NewServerInjectInput) *Server {
+	casdoorService := service.NewCasdoorService(inject.CasdoorClient)
 
 	userService := service.NewUserService(casdoorService)
 	userHandler := handler.NewUserHandler(userService)
 
-	enforcerService := service.NewEnforcerService(casdoorService)
+	enforcerService := service.NewEnforcerService(&service.ServiceInjectInput{
+		CasdoorService: casdoorService,
+	})
 	enforcerHandler := handler.NewEnforcerHandler(enforcerService)
 
 	s := &Server{

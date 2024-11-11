@@ -4,8 +4,8 @@ type EnforcerService struct {
 	casdoorService *CasdoorService
 }
 
-func NewEnforcerService(casdoorService *CasdoorService) *EnforcerService {
-	return &EnforcerService{casdoorService: casdoorService}
+func NewEnforcerService(inject *ServiceInjectInput) *EnforcerService {
+	return &EnforcerService{casdoorService: inject.CasdoorService}
 }
 
 func (s *EnforcerService) Enforce(input *EnforceInput) (*EnforceResult, error) {
